@@ -1,4 +1,4 @@
-# FinancialLLM Analyzer
+# Financial Analyzer
 
 **Universal Financial Document Intelligence Platform**
 
@@ -144,4 +144,4 @@ backend/
 
 ---
 
-**FinancialLLM Analyzer** - Transform financial documents into actionable intelligence with LLM precision.
+**Financial Analyzer** - Transform financial documents into actionable intelligence with LLM precision.

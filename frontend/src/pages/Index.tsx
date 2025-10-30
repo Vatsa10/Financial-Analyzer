@@ -200,7 +200,7 @@ const Index = () => {
                 <TrendingUp className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-slate-900">FinancialLLM Analyzer</h1>
+                <h1 className="text-2xl font-bold text-slate-900">Financial Analyzer</h1>
                 <p className="text-slate-600">Transform Any Financial Document into Actionable Intelligence</p>
               </div>
             </div>
@@ -319,7 +319,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
             <p className="text-slate-600">
-              Powered by <strong>FinancialLLM Analyzer</strong> - Transform financial documents into actionable intelligence
+              Powered by <strong>Financial Analyzer</strong> - Transform financial documents into actionable intelligence
             </p>
           </div>
         </div>

@@ -157,5 +157,5 @@ app.post('/api/ask-question', async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`FinancialLLM Analyzer Backend Server running on http://localhost:${port}`);
+  console.log(`Financial Analyzer Backend Server running on http://localhost:${port}`);
 }); 

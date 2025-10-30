@@ -1,7 +1,7 @@
 {
   "name": "financial-llm-analyzer-backend",
   "version": "1.0.0",
-  "description": "Backend API for FinancialLLM Analyzer - Universal Financial Document Intelligence Platform",
+  "description": "Backend API for Financial Analyzer - Universal Financial Document Intelligence Platform",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
