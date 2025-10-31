@@ -190,13 +190,20 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 relative">
+      {/* Animated background elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-20 w-96 h-96 bg-white/30 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-black/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-gray-400/20 rounded-full blur-3xl animate-pulse delay-500"></div>
+      </div>
+      
       {/* Header */}
-      <header className="bg-white border-b border-gray-300 shadow-sm">
+      <header className="backdrop-blur-xl bg-white/70 border-b border-white/20 shadow-lg relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="bg-black p-2 rounded-lg">
+              <div className="bg-black/80 backdrop-blur-sm p-2 rounded-lg shadow-lg">
                 <TrendingUp className="h-6 w-6 text-white" />
               </div>
               <div>
@@ -205,7 +212,7 @@ const Index = () => {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <Badge variant="secondary" className="bg-gray-200 text-black border border-gray-400">
+              <Badge variant="secondary" className="backdrop-blur-md bg-white/60 text-black border border-white/40 shadow-lg">
                 Universal Analysis
               </Badge>
             </div>
@@ -214,7 +221,7 @@ const Index = () => {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-[16rem]">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-[16rem] relative z-10">
         {!uploadedFile && !generatedReport && (
           <div className="text-center space-y-8">
             {/* Hero Section & Features etc. - no change here */}
@@ -228,33 +235,33 @@ const Index = () => {
               </p>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-              <Card className="p-6 text-center space-y-4 hover:shadow-lg transition-shadow border-2 border-gray-300">
-                <div className="bg-gray-200 p-3 rounded-full w-fit mx-auto">
+              <Card className="p-6 text-center space-y-4 backdrop-blur-xl bg-white/40 border border-white/30 shadow-2xl hover:bg-white/50 transition-all hover:scale-105">
+                <div className="bg-black/10 backdrop-blur-sm p-3 rounded-full w-fit mx-auto shadow-lg">
                   <FileText className="h-6 w-6 text-black" />
                 </div>
                 <h3 className="text-lg font-semibold text-black">Universal Document Processing</h3>
-                <p className="text-gray-600">Process quarterly reports, SEC filings, 10-K/10-Q forms, earnings transcripts, and annual reports</p>
+                <p className="text-gray-700">Process quarterly reports, SEC filings, 10-K/10-Q forms, earnings transcripts, and annual reports</p>
               </Card>
-              <Card className="p-6 text-center space-y-4 hover:shadow-lg transition-shadow border-2 border-gray-300">
-                <div className="bg-gray-200 p-3 rounded-full w-fit mx-auto">
+              <Card className="p-6 text-center space-y-4 backdrop-blur-xl bg-white/40 border border-white/30 shadow-2xl hover:bg-white/50 transition-all hover:scale-105">
+                <div className="bg-black/10 backdrop-blur-sm p-3 rounded-full w-fit mx-auto shadow-lg">
                   <Zap className="h-6 w-6 text-black" />
                 </div>
                 <h3 className="text-lg font-semibold text-black">LLM-Powered Analysis</h3>
-                <p className="text-gray-600">Advanced language models with intelligent RAG processing for comprehensive financial insights</p>
+                <p className="text-gray-700">Advanced language models with intelligent RAG processing for comprehensive financial insights</p>
               </Card>
-              <Card className="p-6 text-center space-y-4 hover:shadow-lg transition-shadow border-2 border-gray-300">
-                <div className="bg-gray-200 p-3 rounded-full w-fit mx-auto">
+              <Card className="p-6 text-center space-y-4 backdrop-blur-xl bg-white/40 border border-white/30 shadow-2xl hover:bg-white/50 transition-all hover:scale-105">
+                <div className="bg-black/10 backdrop-blur-sm p-3 rounded-full w-fit mx-auto shadow-lg">
                   <Shield className="h-6 w-6 text-black" />
                 </div>
                 <h3 className="text-lg font-semibold text-black">Risk Assessment</h3>
-                <p className="text-gray-600">Comprehensive identification of business, financial, and market risks across all document types</p>
+                <p className="text-gray-700">Comprehensive identification of business, financial, and market risks across all document types</p>
               </Card>
-              <Card className="p-6 text-center space-y-4 hover:shadow-lg transition-shadow border-2 border-gray-300">
-                <div className="bg-gray-200 p-3 rounded-full w-fit mx-auto">
+              <Card className="p-6 text-center space-y-4 backdrop-blur-xl bg-white/40 border border-white/30 shadow-2xl hover:bg-white/50 transition-all hover:scale-105">
+                <div className="bg-black/10 backdrop-blur-sm p-3 rounded-full w-fit mx-auto shadow-lg">
                   <Users className="h-6 w-6 text-black" />
                 </div>
                 <h3 className="text-lg font-semibold text-black">Executive Insights</h3>
-                <p className="text-gray-600">Extract management commentary, strategic direction, and forward-looking statements</p>
+                <p className="text-gray-700">Extract management commentary, strategic direction, and forward-looking statements</p>
               </Card>
             </div>
             {/* Upload Section */}
@@ -276,24 +283,24 @@ const Index = () => {
 
         {isProcessing && !generatedReport && (
           <div className="max-w-4xl mx-auto text-center space-y-8 py-12">
-            <div className="animate-pulse">
-              <div className="bg-gray-200 p-6 rounded-full w-fit mx-auto mb-6">
+            <div className="animate-pulse backdrop-blur-xl bg-white/40 border border-white/30 rounded-2xl p-8 shadow-2xl">
+              <div className="bg-black/10 backdrop-blur-sm p-6 rounded-full w-fit mx-auto mb-6 shadow-lg">
                 <Users className="h-12 w-12 text-black" />
               </div>
               <h3 className="text-2xl font-semibold text-black mb-4">Processing Your Financial Document</h3>
-              <p className="text-lg text-gray-600">Our AI is analyzing the document... Please be patient.</p>
+              <p className="text-lg text-gray-700">Our AI is analyzing the document... Please be patient.</p>
             </div>
-            <div className="w-full max-w-md mx-auto bg-gray-300 rounded-full h-3">
-              <div className="bg-black h-3 rounded-full animate-pulse" style={{ width: '75%' }}></div>
+            <div className="w-full max-w-md mx-auto backdrop-blur-md bg-white/30 rounded-full h-3 border border-white/40 shadow-lg overflow-hidden">
+              <div className="bg-gradient-to-r from-black/80 to-black/60 h-3 rounded-full animate-pulse" style={{ width: '75%' }}></div>
             </div>
           </div>
         )}
 
         {generatedReport && (
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between backdrop-blur-xl bg-white/40 border border-white/30 rounded-xl p-4 shadow-xl">
               <h2 className="text-2xl font-bold text-black">Generated Financial Analysis Report</h2>
-              <Button onClick={resetApplication} variant="outline" className="border-2 border-black text-black hover:bg-gray-100">
+              <Button onClick={resetApplication} variant="outline" className="backdrop-blur-md bg-white/60 border-2 border-white/40 text-black hover:bg-white/80 shadow-lg">
                 Analyze New Document
               </Button>
             </div>
@@ -315,13 +322,13 @@ const Index = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-gray-300 mt-20">
+      <footer className="backdrop-blur-xl bg-white/70 border-t border-white/20 mt-20 shadow-lg relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
-            <p className="text-gray-600">
+            <p className="text-gray-700">
               Powered by <strong>Financial Analyzer</strong> - Transform financial documents into actionable intelligence
             </p>
-            <p className="text-blue-600">
+            <p className="text-gray-600">
               Made by <strong>Vatsa Joshi</strong>
             </p>
           </div>

@@ -104,10 +104,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   if (isLoading) {
     return (
-      <Card className="p-6 border-2 border-gray-300">
+      <Card className="p-6 backdrop-blur-xl bg-white/40 border border-white/30 shadow-2xl">
         <div className="text-center">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-black" />
-          <p className="text-gray-600">Preparing chat interface...</p>
+          <p className="text-gray-700">Preparing chat interface...</p>
         </div>
       </Card>
     );
@@ -116,13 +116,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   return (
     <div className="space-y-4">
       {/* Chat Header */}
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center space-x-3 backdrop-blur-xl bg-white/40 border border-white/30 rounded-xl p-4 shadow-xl">
         <MessageCircle className="h-6 w-6 text-black" />
         <h2 className="text-xl font-semibold text-black">Ask Questions About {companyName}</h2>
       </div>
 
       {/* Premade Questions */}
-      <Card className="p-4 bg-gray-100 border-2 border-gray-300">
+      <Card className="p-4 backdrop-blur-xl bg-white/30 border border-white/30 shadow-2xl">
         <div className="flex items-center space-x-2 mb-3">
           <Lightbulb className="h-4 w-4 text-black" />
           <h3 className="text-sm font-medium text-black">Quick Questions:</h3>
@@ -133,7 +133,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               key={index}
               variant="outline"
               size="sm"
-              className="text-left justify-start h-auto p-3 text-black border-2 border-gray-400 hover:bg-gray-200 whitespace-normal"
+              className="text-left justify-start h-auto p-3 text-black backdrop-blur-md bg-white/50 border border-white/40 hover:bg-white/70 whitespace-normal shadow-lg transition-all"
               onClick={() => handlePremadeQuestion(question)}
               disabled={isAsking}
             >
@@ -144,7 +144,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       </Card>
 
       {/* Chat Messages */}
-      <Card className="p-4 border-2 border-gray-300">
+      <Card className="p-4 backdrop-blur-xl bg-white/40 border border-white/30 shadow-2xl">
         <div className="h-96 overflow-y-auto space-y-4 mb-4">
           {messages.map((message) => (
             <div
@@ -152,10 +152,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg shadow-lg ${
                   message.type === 'user'
-                    ? 'bg-black text-white'
-                    : 'bg-gray-200 text-black'
+                    ? 'backdrop-blur-md bg-black/80 text-white border border-white/20'
+                    : 'backdrop-blur-md bg-white/60 text-black border border-white/40'
                 }`}
               >
                 <p className="text-sm whitespace-pre-wrap">{message.content}</p>
@@ -170,7 +170,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           
           {isAsking && (
             <div className="flex justify-start">
-              <div className="bg-gray-200 text-black px-4 py-2 rounded-lg">
+              <div className="backdrop-blur-md bg-white/60 text-black px-4 py-2 rounded-lg border border-white/40 shadow-lg">
                 <div className="flex items-center space-x-2">
                   <Loader2 className="h-4 w-4 animate-spin" />
                   <p className="text-sm">Analyzing report...</p>
@@ -189,12 +189,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             onChange={(e) => setCurrentQuestion(e.target.value)}
             placeholder="Ask a question about the report..."
             disabled={isAsking}
-            className="flex-1 border-2 border-gray-400"
+            className="flex-1 backdrop-blur-md bg-white/50 border border-white/40 shadow-lg"
           />
           <Button
             type="submit"
             disabled={!currentQuestion.trim() || isAsking}
-            className="bg-black hover:bg-gray-800 text-white"
+            className="backdrop-blur-md bg-black/80 hover:bg-black/90 text-white border border-white/20 shadow-lg"
           >
             {isAsking ? (
               <Loader2 className="h-4 w-4 animate-spin" />

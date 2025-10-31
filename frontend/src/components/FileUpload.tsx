@@ -73,8 +73,10 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, onUrlSubmi
       <TabsContent value="upload">
         <div className="space-y-6">
           <Card 
-            className={`p-8 border-2 border-dashed transition-colors cursor-pointer hover:bg-gray-50 ${
-              isDragOver ? 'border-black bg-gray-100' : 'border-gray-400'
+            className={`p-8 border-2 border-dashed transition-all cursor-pointer shadow-2xl ${
+              isDragOver 
+                ? 'backdrop-blur-xl bg-white/60 border-black/50 scale-105' 
+                : 'backdrop-blur-xl bg-white/40 border-white/40 hover:bg-white/50'
             }`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
@@ -82,7 +84,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, onUrlSubmi
             onClick={openFileDialog}
           >
             <div className="text-center space-y-4">
-              <div className="bg-gray-200 p-3 rounded-full w-fit mx-auto">
+              <div className="backdrop-blur-sm bg-black/10 p-3 rounded-full w-fit mx-auto shadow-lg">
                 <Upload className="h-8 w-8 text-black" />
               </div>
               
@@ -111,19 +113,19 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, onUrlSubmi
           </Card>
 
           {selectedFile && (
-            <Card className="p-6 border-2 border-gray-300">
+            <Card className="p-6 backdrop-blur-xl bg-white/50 border border-white/40 shadow-2xl">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <FileText className="h-8 w-8 text-black" />
                   <div>
                     <h4 className="font-semibold text-black">{selectedFile.name}</h4>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-700">
                       {(selectedFile.size / 1024 / 1024).toFixed(1)} MB
                     </p>
                   </div>
                 </div>
                 
-                <Button onClick={handleUploadClick} className="bg-black hover:bg-gray-800 text-white">
+                <Button onClick={handleUploadClick} className="backdrop-blur-md bg-black/80 hover:bg-black/90 text-white border border-white/20 shadow-lg">
                   Process Document
                 </Button>
               </div>
@@ -133,16 +135,16 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, onUrlSubmi
       </TabsContent>
       
       <TabsContent value="url">
-        <Card className="p-8 border-2 border-gray-300">
+        <Card className="p-8 backdrop-blur-xl bg-white/40 border border-white/30 shadow-2xl">
           <div className="text-center space-y-4">
-            <div className="bg-gray-200 p-3 rounded-full w-fit mx-auto">
+            <div className="backdrop-blur-sm bg-black/10 p-3 rounded-full w-fit mx-auto shadow-lg">
               <Link className="h-8 w-8 text-black" />
             </div>
             <div>
               <h3 className="text-lg font-semibold text-black mb-2">
                 Process Financial Document from URL
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-700 mb-4">
                 Enter the public URL of a PDF financial document (SEC filings, quarterly reports, etc.).
               </p>
             </div>
@@ -153,9 +155,9 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, onUrlSubmi
               placeholder="https://example.com/10k-report.pdf" 
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              className="border-2 border-gray-400"
+              className="backdrop-blur-md bg-white/50 border border-white/40 shadow-lg"
             />
-            <Button onClick={handleUrlSubmit} className="bg-black hover:bg-gray-800 text-white">
+            <Button onClick={handleUrlSubmit} className="backdrop-blur-md bg-black/80 hover:bg-black/90 text-white border border-white/20 shadow-lg">
               Fetch and Process
             </Button>
           </div>
