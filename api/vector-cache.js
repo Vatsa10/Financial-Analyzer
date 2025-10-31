@@ -1,4 +1,4 @@
-const { OpenAIEmbeddings } = require('@langchain/openai');
+const { HuggingFaceInferenceEmbeddings } = require('@langchain/community/embeddings/hf');
 const { MemoryVectorStore } = require('langchain/vectorstores/memory');
 const { Document } = require('langchain/document');
 const fs = require('fs');
@@ -12,6 +12,15 @@ if (!fs.existsSync(CACHE_DIR)) {
 
 // In-memory cache as fallback for Vercel
 const memoryCache = new Map();
+
+const buildEmbeddings = () => {
+  return new HuggingFaceInferenceEmbeddings({
+    model: 'sentence-transformers/all-MiniLM-L6-v2',
+    apiKey: process.env.HF_API_KEY,
+    apiUrl: 'https://api-inference.huggingface.co/pipeline/feature-extraction',
+    maxRetries: 3
+  });
+};
 
 // Cache management functions
 const saveVectorStore = async (filename, vectorStore) => {
@@ -53,12 +62,7 @@ const loadVectorStore = async (filename, apiKey) => {
         metadata: doc.metadata
       }));
       
-      const embeddings = new OpenAIEmbeddings({
-        openAIApiKey: apiKey,
-        batchSize: 50,
-      });
-      
-      const vectorStore = await MemoryVectorStore.fromDocuments(documents, embeddings);
+      const vectorStore = await MemoryVectorStore.fromDocuments(documents, buildEmbeddings());
       // Store in memory cache for future use
       memoryCache.set(filename, vectorStore);
       console.log(`Vector store loaded from file and cached in memory for ${filename}`);
