@@ -197,7 +197,7 @@ const Index = () => {
         <div className="absolute bottom-20 right-20 w-96 h-96 bg-black/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
         <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-gray-400/20 rounded-full blur-3xl animate-pulse delay-500"></div>
       </div>
-      
+
       {/* Header */}
       <header className="backdrop-blur-xl bg-white/70 border-b border-white/20 shadow-lg relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

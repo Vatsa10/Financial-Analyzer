@@ -37,7 +37,7 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-app.get('/fetch-pdf', async (req, res) => {
+app.get('/api/fetch-pdf', async (req, res) => {
   const { url } = req.query;
 
   if (!url) {
@@ -45,17 +45,27 @@ app.get('/fetch-pdf', async (req, res) => {
   }
 
   try {
+    console.log('Fetching PDF from URL:', url);
     const response = await axios({
       method: 'get',
       url: url,
-      responseType: 'stream',
+      responseType: 'arraybuffer',
+      timeout: 30000, // 30 second timeout
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      }
     });
 
+    console.log('PDF fetched successfully, size:', response.data.length);
     res.setHeader('Content-Type', 'application/pdf');
-    response.data.pipe(res);
+    res.setHeader('Content-Length', response.data.length);
+    res.send(Buffer.from(response.data));
   } catch (error) {
     console.error('Error fetching PDF:', error.message);
-    res.status(500).send('Failed to fetch PDF');
+    if (error.response) {
+      console.error('Response status:', error.response.status);
+    }
+    res.status(500).send(`Failed to fetch PDF: ${error.message}`);
   }
 });
 
