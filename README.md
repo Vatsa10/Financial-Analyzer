@@ -7,8 +7,9 @@ Transform any financial document into actionable intelligence using advanced LLM
 ## Features
 
 ### **Dual-Mode Analysis System**
-- **Single Agent Mode**: Fast, unified analysis with consistent output - ideal for quick insights
-- **Multi-Agent Mode**: Specialized agents for deeper analysis - ideal for comprehensive reports
+- **Single Agent Mode**: Fast, unified analysis with structured bullet-point output - ideal for quick insights
+- **Multi-Agent Mode**: Specialized agents (Researcher, Analyst, Risk Assessor, Strategist) for deeper analysis with structured formatting
+- **Consistent Output**: Both modes produce clean, structured bullet points with no markdown formatting
 - **Intelligent Fallback**: Automatic fallback to Single Agent if Multi-Agent encounters issues
 - **Mode Persistence**: Your preferred mode is saved automatically
 
@@ -19,15 +20,19 @@ Transform any financial document into actionable intelligence using advanced LLM
 
 ### **LLM-Powered Analysis**
 - **Advanced RAG**: Context-aware information retrieval with vector embeddings
+- **Structured Output**: Automated formatting ensures consistent bullet-point structure across all sections
+- **Multi-Agent Pipeline**: Planner → Researcher → Analyst → Validator → Formatter workflow (Single Agent mode)
+- **Specialized Agents**: Role-based agents with expertise-specific analysis (Multi-Agent mode)
 - **Parallel Processing**: Simultaneous analysis of multiple report sections
 - **Error Resilience**: Automatic retry logic with intelligent rate limiting
 - **Strategy Pattern**: Modular architecture supporting multiple analysis approaches
 
 ### **Generated Analysis Sections**
-- **Company Overview**: Business model and strategic positioning analysis
-- **Financial Highlights**: Key metrics, ratios, and performance indicators
-- **Risk Assessment**: Business, financial, and market risk identification
-- **Executive Insights**: Management commentary and strategic direction
+All sections are generated with structured bullet points (•) for easy readability:
+- **Company Overview**: Business model, operations, market position, and strategic initiatives
+- **Financial Highlights**: Revenue trends, profitability metrics, ratios, and performance indicators with specific numbers
+- **Risk Assessment**: Business, operational, financial, regulatory, and market risks with impact analysis
+- **Management Commentary**: Executive outlook, strategic priorities, forward guidance, and long-term vision
 
 ### **Interactive Q&A**
 - **Intelligent Chat**: Ask questions about the analyzed document
@@ -125,9 +130,10 @@ src/
 backend/
 ├── server.js                      # Express server & API endpoints
 ├── ragOrchestrator.js             # Strategy pattern orchestrator
+├── agenticWorkflow.js             # Agentic pipeline with structured formatting
 ├── strategies/
-│   ├── singleAgentStrategy.js    # Single agent RAG implementation
-│   └── multiAgentStrategy.js     # Multi-agent RAG implementation
+│   ├── singleAgentStrategy.js    # Single agent with planner-researcher-analyst-validator-formatter pipeline
+│   └── multiAgentStrategy.js     # Multi-agent with specialized roles and structured output
 ├── pdfProcessor.js                # PDF text extraction
 ├── package.json                   # Dependencies
 └── uploads/                       # Temporary file storage
