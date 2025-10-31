@@ -73,8 +73,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, onUrlSubmi
       <TabsContent value="upload">
         <div className="space-y-6">
           <Card 
-            className={`p-8 border-2 border-dashed transition-colors cursor-pointer hover:bg-slate-50 ${
-              isDragOver ? 'border-blue-500 bg-blue-50' : 'border-slate-300'
+            className={`p-8 border-2 border-dashed transition-colors cursor-pointer hover:bg-gray-50 ${
+              isDragOver ? 'border-black bg-gray-100' : 'border-gray-400'
             }`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
@@ -82,19 +82,19 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, onUrlSubmi
             onClick={openFileDialog}
           >
             <div className="text-center space-y-4">
-              <div className="bg-blue-100 p-3 rounded-full w-fit mx-auto">
-                <Upload className="h-8 w-8 text-blue-600" />
+              <div className="bg-gray-200 p-3 rounded-full w-fit mx-auto">
+                <Upload className="h-8 w-8 text-black" />
               </div>
               
               <div>
-                <h3 className="text-lg font-semibold text-slate-900 mb-2">
+                <h3 className="text-lg font-semibold text-black mb-2">
                   Upload Financial Document
                 </h3>
-                <p className="text-slate-600 mb-4">
+                <p className="text-gray-600 mb-4">
                   Drag and drop your PDF file here, or click to browse
                 </p>
                 
-                <div className="flex items-center justify-center space-x-2 text-sm text-slate-500">
+                <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
                   <AlertCircle className="h-4 w-4" />
                   <span>Supports quarterly reports, SEC filings, 10-K/10-Q forms, earnings transcripts, annual reports</span>
                 </div>
@@ -111,19 +111,19 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, onUrlSubmi
           </Card>
 
           {selectedFile && (
-            <Card className="p-6">
+            <Card className="p-6 border-2 border-gray-300">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <FileText className="h-8 w-8 text-blue-600" />
+                  <FileText className="h-8 w-8 text-black" />
                   <div>
-                    <h4 className="font-semibold text-slate-900">{selectedFile.name}</h4>
-                    <p className="text-sm text-slate-600">
+                    <h4 className="font-semibold text-black">{selectedFile.name}</h4>
+                    <p className="text-sm text-gray-600">
                       {(selectedFile.size / 1024 / 1024).toFixed(1)} MB
                     </p>
                   </div>
                 </div>
                 
-                <Button onClick={handleUploadClick} className="bg-blue-600 hover:bg-blue-700">
+                <Button onClick={handleUploadClick} className="bg-black hover:bg-gray-800 text-white">
                   Process Document
                 </Button>
               </div>
@@ -133,16 +133,16 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, onUrlSubmi
       </TabsContent>
       
       <TabsContent value="url">
-        <Card className="p-8">
+        <Card className="p-8 border-2 border-gray-300">
           <div className="text-center space-y-4">
-            <div className="bg-blue-100 p-3 rounded-full w-fit mx-auto">
-              <Link className="h-8 w-8 text-blue-600" />
+            <div className="bg-gray-200 p-3 rounded-full w-fit mx-auto">
+              <Link className="h-8 w-8 text-black" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">
+              <h3 className="text-lg font-semibold text-black mb-2">
                 Process Financial Document from URL
               </h3>
-              <p className="text-slate-600 mb-4">
+              <p className="text-gray-600 mb-4">
                 Enter the public URL of a PDF financial document (SEC filings, quarterly reports, etc.).
               </p>
             </div>
@@ -153,8 +153,9 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, onUrlSubmi
               placeholder="https://example.com/10k-report.pdf" 
               value={url}
               onChange={(e) => setUrl(e.target.value)}
+              className="border-2 border-gray-400"
             />
-            <Button onClick={handleUrlSubmit} className="bg-blue-600 hover:bg-blue-700">
+            <Button onClick={handleUrlSubmit} className="bg-black hover:bg-gray-800 text-white">
               Fetch and Process
             </Button>
           </div>

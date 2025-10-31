@@ -104,10 +104,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   if (isLoading) {
     return (
-      <Card className="p-6">
+      <Card className="p-6 border-2 border-gray-300">
         <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
-          <p className="text-slate-600">Preparing chat interface...</p>
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-black" />
+          <p className="text-gray-600">Preparing chat interface...</p>
         </div>
       </Card>
     );
@@ -117,15 +117,15 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     <div className="space-y-4">
       {/* Chat Header */}
       <div className="flex items-center space-x-3">
-        <MessageCircle className="h-6 w-6 text-blue-600" />
-        <h2 className="text-xl font-semibold text-slate-900">Ask Questions About {companyName}</h2>
+        <MessageCircle className="h-6 w-6 text-black" />
+        <h2 className="text-xl font-semibold text-black">Ask Questions About {companyName}</h2>
       </div>
 
       {/* Premade Questions */}
-      <Card className="p-4 bg-blue-50 border-blue-200">
+      <Card className="p-4 bg-gray-100 border-2 border-gray-300">
         <div className="flex items-center space-x-2 mb-3">
-          <Lightbulb className="h-4 w-4 text-blue-600" />
-          <h3 className="text-sm font-medium text-blue-900">Quick Questions:</h3>
+          <Lightbulb className="h-4 w-4 text-black" />
+          <h3 className="text-sm font-medium text-black">Quick Questions:</h3>
         </div>
         <div className="space-y-2">
           {premadeQuestions.map((question, index) => (
@@ -133,7 +133,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               key={index}
               variant="outline"
               size="sm"
-              className="text-left justify-start h-auto p-3 text-blue-700 border-blue-300 hover:bg-blue-100 whitespace-normal"
+              className="text-left justify-start h-auto p-3 text-black border-2 border-gray-400 hover:bg-gray-200 whitespace-normal"
               onClick={() => handlePremadeQuestion(question)}
               disabled={isAsking}
             >
@@ -144,7 +144,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       </Card>
 
       {/* Chat Messages */}
-      <Card className="p-4">
+      <Card className="p-4 border-2 border-gray-300">
         <div className="h-96 overflow-y-auto space-y-4 mb-4">
           {messages.map((message) => (
             <div
@@ -154,13 +154,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               <div
                 className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                   message.type === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-slate-100 text-slate-900'
+                    ? 'bg-black text-white'
+                    : 'bg-gray-200 text-black'
                 }`}
               >
                 <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                 <p className={`text-xs mt-1 ${
-                  message.type === 'user' ? 'text-blue-100' : 'text-slate-500'
+                  message.type === 'user' ? 'text-gray-300' : 'text-gray-600'
                 }`}>
                   {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </p>
@@ -170,7 +170,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           
           {isAsking && (
             <div className="flex justify-start">
-              <div className="bg-slate-100 text-slate-900 px-4 py-2 rounded-lg">
+              <div className="bg-gray-200 text-black px-4 py-2 rounded-lg">
                 <div className="flex items-center space-x-2">
                   <Loader2 className="h-4 w-4 animate-spin" />
                   <p className="text-sm">Analyzing report...</p>
@@ -189,12 +189,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             onChange={(e) => setCurrentQuestion(e.target.value)}
             placeholder="Ask a question about the report..."
             disabled={isAsking}
-            className="flex-1"
+            className="flex-1 border-2 border-gray-400"
           />
           <Button
             type="submit"
             disabled={!currentQuestion.trim() || isAsking}
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-black hover:bg-gray-800 text-white"
           >
             {isAsking ? (
               <Loader2 className="h-4 w-4 animate-spin" />
