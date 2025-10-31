@@ -37,6 +37,7 @@ const upload = multer({ storage: storage });
 const allowedOrigins = [
   'http://localhost:8080', // Local development
   'http://localhost:5173', // Vite default port
+  'https://financial-analyzer-nine.vercel.app', // Vercel frontend
   process.env.FRONTEND_URL, // Production frontend URL from environment variable
 ].filter(Boolean); // Remove undefined values
 
@@ -45,11 +46,12 @@ app.use(cors({
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes('*')) {
+    if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
       console.log('CORS blocked origin:', origin);
-      callback(null, true); // Allow all origins for now, restrict later if needed
+      // For now, allow all origins to avoid blocking issues
+      callback(null, true);
     }
   },
   credentials: true
