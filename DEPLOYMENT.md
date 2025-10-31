@@ -118,6 +118,9 @@ This will use your local backend instead of the deployed one.
 - `OPENROUTER_API_KEY` - Required for LLM processing
 - `HF_API_KEY` - Optional, for faster embeddings
 - `NODE_ENV` - Set to `production`
+- `DEFAULT_RAG_MODE` - Default analysis mode: `single` or `multi` (default: `single`)
+- `ENABLED_RAG_MODES` - Comma-separated list of enabled modes (default: `single,multi`)
+- `FRONTEND_URL` - Your frontend URL for CORS
 
 ### Frontend
 - `VITE_API_URL` - Your deployed backend URL

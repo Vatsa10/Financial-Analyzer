@@ -6,12 +6,12 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 const { extractTextFromPDF } = require('./pdfProcessor');
-const { generateReportSections, answerQuestion } = require('./aiProcessor');
+const ragOrchestrator = require('./ragOrchestrator');
 
 const app = express();
 const port = process.env.PORT || 3001;
 
-// Simple in-memory cache for vector stores
+// Simple in-memory cache for vector stores with mode information
 const vectorStoreCache = new Map();
 
 // Ensure the uploads directory exists
@@ -108,13 +108,24 @@ app.post('/api/upload', upload.single('report'), (req, res) => {
   });
 });
 
-// New endpoint to trigger report generation
+// Get available RAG modes
+app.get('/api/rag-modes', (req, res) => {
+  try {
+    const modes = ragOrchestrator.getAllStrategies();
+    res.status(200).json({ modes });
+  } catch (error) {
+    console.error('Error fetching RAG modes:', error);
+    res.status(500).json({ error: 'Failed to fetch RAG modes' });
+  }
+});
+
+// New endpoint to trigger report generation with mode selection
 app.post('/api/generate-report', async (req, res) => {
   console.log('=== FINANCIAL DOCUMENT ANALYSIS STARTED ===');
   console.log('Request body:', req.body);
   
-  const { filename, companyName } = req.body;
-  const apiKey = process.env.OPENAI_API_KEY;
+  const { filename, companyName, mode = 'single' } = req.body;
+  const apiKey = process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY;
 
   if (!filename || !companyName || !apiKey) {
     console.error('Missing required parameters:', { filename: !!filename, companyName: !!companyName, apiKey: !!apiKey });
@@ -124,6 +135,7 @@ app.post('/api/generate-report', async (req, res) => {
   const filePath = path.join(__dirname, 'uploads', filename);
   console.log('File path:', filePath);
   console.log('File exists:', fs.existsSync(filePath));
+  console.log('Selected mode:', mode);
 
   try {
     // 1. Extract text from PDF
@@ -135,18 +147,34 @@ app.post('/api/generate-report', async (req, res) => {
       throw new Error('Text extraction returned empty.');
     }
 
-    // 2. Generate report sections using AI
-    console.log('Step 2: Starting LLM-powered financial analysis...');
-    const { sections, vectorStore } = await generateReportSections(extractedText, companyName, process.env.OPENROUTER_API_KEY || apiKey);
-    console.log('Financial analysis completed. Sections:', Object.keys(sections));
+    // 2. Generate report sections using selected strategy
+    console.log(`Step 2: Starting LLM-powered financial analysis using ${mode} mode...`);
+    const result = await ragOrchestrator.generateReport({
+      mode,
+      extractedText,
+      companyName,
+      apiKey
+    });
+    
+    console.log('Financial analysis completed. Sections:', Object.keys(result.sections));
+    console.log('Mode used:', result.metadata.mode);
+    if (result.metadata.fallback) {
+      console.log('Fallback occurred from:', result.metadata.originalMode);
+    }
 
-    // Cache the vector store for Q&A
-    vectorStoreCache.set(filename, vectorStore);
-    console.log(`Vector store for ${filename} cached for Q&A.`);
+    // Cache the vector store for Q&A with mode information
+    vectorStoreCache.set(filename, {
+      vectorStore: result.vectorStore,
+      mode: result.metadata.mode
+    });
+    console.log(`Vector store for ${filename} cached for Q&A with mode: ${result.metadata.mode}`);
 
     // 3. Send report back to client
     console.log('Step 3: Sending financial analysis to client...');
-    res.status(200).json(sections);
+    res.status(200).json({
+      ...result.sections,
+      metadata: result.metadata
+    });
     console.log('=== FINANCIAL DOCUMENT ANALYSIS COMPLETED SUCCESSFULLY ===');
 
   } catch (error) {
@@ -175,14 +203,29 @@ app.post('/api/ask-question', async (req, res) => {
     return res.status(400).send('Missing required parameters.');
   }
 
-  const vectorStore = vectorStoreCache.get(filename);
-  if (!vectorStore) {
+  const cacheEntry = vectorStoreCache.get(filename);
+  if (!cacheEntry) {
     return res.status(404).send('Analysis context not found. Please generate a report first.');
   }
 
+  const { vectorStore, mode } = cacheEntry;
+  console.log(`Answering question using ${mode} mode`);
+
   try {
-    const answer = await answerQuestion(vectorStore, question, companyName, apiKey);
-    res.status(200).json({ answer });
+    const result = await ragOrchestrator.answerQuestion({
+      mode,
+      vectorStore,
+      question,
+      companyName,
+      apiKey
+    });
+    
+    res.status(200).json({
+      answer: result.answer,
+      mode: result.mode,
+      strategyName: result.strategyName,
+      fallback: result.fallback || false
+    });
   } catch (error) {
     console.error('Error in Q&A:', error.message);
     res.status(500).send('Failed to get an answer.');

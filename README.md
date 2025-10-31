@@ -6,6 +6,12 @@ Transform any financial document into actionable intelligence using advanced LLM
 
 ## Features
 
+### **Dual-Mode Analysis System**
+- **Single Agent Mode**: Fast, unified analysis with consistent output - ideal for quick insights
+- **Multi-Agent Mode**: Specialized agents for deeper analysis - ideal for comprehensive reports
+- **Intelligent Fallback**: Automatic fallback to Single Agent if Multi-Agent encounters issues
+- **Mode Persistence**: Your preferred mode is saved automatically
+
 ### **Universal Document Processing**
 - **Multi-Format Support**: Quarterly reports, SEC filings, 10-K/10-Q forms, earnings transcripts
 - **Global Coverage**: Analyze financial documents from companies worldwide
@@ -15,6 +21,7 @@ Transform any financial document into actionable intelligence using advanced LLM
 - **Advanced RAG**: Context-aware information retrieval with vector embeddings
 - **Parallel Processing**: Simultaneous analysis of multiple report sections
 - **Error Resilience**: Automatic retry logic with intelligent rate limiting
+- **Strategy Pattern**: Modular architecture supporting multiple analysis approaches
 
 ### **Generated Analysis Sections**
 - **Company Overview**: Business model and strategic positioning analysis
@@ -116,22 +123,26 @@ src/
 ### Backend
 ```
 backend/
-├── server.js            # Express server & API endpoints
-├── aiProcessor.js       # LLM processing & RAG logic
-├── pdfProcessor.js      # PDF text extraction
-├── package.json         # Dependencies
-└── uploads/             # Temporary file storage
+├── server.js                      # Express server & API endpoints
+├── ragOrchestrator.js             # Strategy pattern orchestrator
+├── strategies/
+│   ├── singleAgentStrategy.js    # Single agent RAG implementation
+│   └── multiAgentStrategy.js     # Multi-agent RAG implementation
+├── pdfProcessor.js                # PDF text extraction
+├── package.json                   # Dependencies
+└── uploads/                       # Temporary file storage
 ```
 
 ## API Endpoints
 
 ### Document Processing
 - `POST /api/upload` - Upload financial document (PDF)
-- `POST /api/generate-report` - Generate comprehensive financial analysis
+- `POST /api/generate-report` - Generate comprehensive financial analysis (supports `mode` parameter: `single` or `multi`)
 - `GET /api/fetch-pdf` - Fetch PDF documents from external URLs
 
 ### Interactive Analysis
-- `POST /api/ask-question` - Ask questions about analyzed documents
+- `POST /api/ask-question` - Ask questions about analyzed documents (uses same mode as report generation)
+- `GET /api/rag-modes` - Get available analysis modes and their status
 - `GET /api/health` - Check API health and environment status
 
 ## Supported Documents

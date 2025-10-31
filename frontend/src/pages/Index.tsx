@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FileUpload } from '@/components/FileUpload';
 import { ReportGenerator } from '@/components/ReportGenerator';
 import { ReportDisplay } from '@/components/ReportDisplay';
 import { ChatInterface } from '@/components/ChatInterface';
+import { ModeSelector, RAGMode } from '@/components/ModeSelector';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,14 @@ export interface CreditReport {
   keyRisks: string;
   managementCommentary: string;
   generatedAt: string;
+  metadata?: {
+    mode: string;
+    strategyName: string;
+    timestamp: string;
+    fallback?: boolean;
+    originalMode?: string;
+    fallbackReason?: string;
+  };
 }
 
 interface UploadedFileData {
@@ -30,9 +39,28 @@ const Index = () => {
   const [uploadedFilename, setUploadedFilename] = useState<string | null>(null);
   const [generatedReport, setGeneratedReport] = useState<CreditReport | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [selectedMode, setSelectedMode] = useState<RAGMode>('single');
   const { toast } = useToast();
 
   const [sessionFilename, setSessionFilename] = useState<string | null>(null);
+
+  // Load saved mode from localStorage
+  useEffect(() => {
+    const savedMode = localStorage.getItem('ragMode') as RAGMode;
+    if (savedMode && (savedMode === 'single' || savedMode === 'multi')) {
+      setSelectedMode(savedMode);
+    }
+  }, []);
+
+  // Save mode to localStorage when it changes
+  const handleModeChange = (mode: RAGMode) => {
+    setSelectedMode(mode);
+    localStorage.setItem('ragMode', mode);
+    toast({
+      title: "Mode Updated",
+      description: `Switched to ${mode === 'single' ? 'Single Agent' : 'Multi-Agent'} mode`,
+    });
+  };
 
   const handleFileUpload = async (file: File) => {
     const formData = new FormData();
@@ -119,6 +147,7 @@ const Index = () => {
         body: JSON.stringify({
           filename: uploadedFile.filename,
           companyName: companyName.trim(),
+          mode: selectedMode,
         }),
       });
 
@@ -131,15 +160,28 @@ const Index = () => {
       const reportSections = await response.json();
 
       const finalReport: CreditReport = {
-        ...reportSections,
+        overview: reportSections.overview,
+        financialHighlights: reportSections.financialHighlights,
+        keyRisks: reportSections.keyRisks,
+        managementCommentary: reportSections.managementCommentary,
         companyName,
-        generatedAt: new Date().toISOString(),
+        generatedAt: reportSections.metadata?.timestamp || new Date().toISOString(),
+        metadata: reportSections.metadata,
       };
 
       setGeneratedReport(finalReport);
       setSessionFilename(originalFilename); // Use the original filename for Q&A
 
-      toast({ title: "Analysis Complete!", description: "Your report has been successfully generated." });
+      // Show success message with mode info
+      const modeUsed = reportSections.metadata?.strategyName || 'Unknown';
+      const fallbackMessage = reportSections.metadata?.fallback 
+        ? ` (Fallback from ${reportSections.metadata.originalMode})` 
+        : '';
+      
+      toast({ 
+        title: "Analysis Complete!", 
+        description: `Report generated using ${modeUsed} mode${fallbackMessage}` 
+      });
 
     } catch (error) {
       console.error('Analysis Error:', error);
@@ -234,6 +276,15 @@ const Index = () => {
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                 Analyze quarterly results, SEC filings, 10-K reports, earnings transcripts, and financial documents from companies worldwide with AI-powered intelligence.
               </p>
+            </div>
+            
+            {/* Mode Selector */}
+            <div className="max-w-4xl mx-auto">
+              <ModeSelector 
+                selectedMode={selectedMode}
+                onModeChange={handleModeChange}
+                disabled={isProcessing}
+              />
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
               <Card className="p-6 text-center space-y-4 backdrop-blur-xl bg-white/40 border border-white/30 shadow-2xl hover:bg-white/50 transition-all hover:scale-105">
