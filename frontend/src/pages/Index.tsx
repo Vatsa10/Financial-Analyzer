@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { FileText, TrendingUp, Shield, Users, Zap, Building2, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { getApiUrl } from '@/config';
 
 export interface CreditReport {
   companyName: string;
@@ -40,7 +41,7 @@ const Index = () => {
     setIsProcessing(true);
     toast({ title: "Uploading file...", description: "Please wait while the document is uploaded." });
     try {
-      const response = await fetch('/api/upload', {
+      const response = await fetch(getApiUrl('api/upload'), {
         method: 'POST',
         body: formData,
       });
@@ -70,7 +71,7 @@ const Index = () => {
     setIsProcessing(true);
     toast({ title: "Fetching file from URL..." });
     try {
-      const response = await fetch(`/api/fetch-pdf?url=${encodeURIComponent(url)}`);
+      const response = await fetch(getApiUrl(`api/fetch-pdf?url=${encodeURIComponent(url)}`));
       if (!response.ok) {
         throw new Error(`Failed to fetch PDF from URL: ${response.statusText}`);
       }
@@ -110,7 +111,7 @@ const Index = () => {
     });
 
     try {
-      const response = await fetch('/api/generate-report', {
+      const response = await fetch(getApiUrl('api/generate-report'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -164,7 +165,7 @@ const Index = () => {
     }
 
     try {
-      const response = await fetch('/api/ask-question', {
+      const response = await fetch(getApiUrl('api/ask-question'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

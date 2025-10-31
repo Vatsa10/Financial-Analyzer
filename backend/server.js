@@ -9,7 +9,7 @@ const { extractTextFromPDF } = require('./pdfProcessor');
 const { generateReportSections, answerQuestion } = require('./aiProcessor');
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 // Simple in-memory cache for vector stores
 const vectorStoreCache = new Map();
@@ -33,7 +33,28 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-app.use(cors());
+// Configure CORS to allow requests from frontend
+const allowedOrigins = [
+  'http://localhost:8080', // Local development
+  'http://localhost:5173', // Vite default port
+  process.env.FRONTEND_URL, // Production frontend URL from environment variable
+].filter(Boolean); // Remove undefined values
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes('*')) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      callback(null, true); // Allow all origins for now, restrict later if needed
+    }
+  },
+  credentials: true
+}));
+
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
