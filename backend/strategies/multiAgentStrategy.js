@@ -75,7 +75,7 @@ class MultiAgentStrategy {
     return results.map(doc => doc.pageContent);
   }
 
-  // Agent-specific content generation
+  // Agent-specific content generation with structured formatting
   async generateWithAgent(agentType, prompt, apiKey) {
     const agent = this.agents[agentType];
     
@@ -92,7 +92,15 @@ class MultiAgentStrategy {
         messages: [
           {
             role: 'system',
-            content: `You are a ${agent.role} specializing in ${agent.expertise}. Provide detailed, professional analysis. Use plain text with bullet points (•) for lists.`
+            content: `You are a ${agent.role} specializing in ${agent.expertise}. 
+CRITICAL FORMATTING RULES:
+- Output MUST be plain text bullet points using the • symbol ONLY
+- Each bullet point must start with • followed by a space
+- Each point must be on a separate line
+- Do NOT use markdown formatting (no **, __, ##, etc.)
+- Do NOT use numbered lists or dashes
+- Do NOT use headers or sections
+- Each bullet should be a complete, informative sentence`
           },
           {
             role: 'user',
@@ -110,77 +118,118 @@ class MultiAgentStrategy {
 
     const data = await response.json();
     let content = data.choices[0]?.message?.content || 'Analysis not available';
-    content = content.replace(/^-\s+/gm, '• ');
-    return content;
+    
+    // Format and clean the output
+    return this.formatOutput(content);
+  }
+
+  // Format output to ensure consistent bullet point structure
+  formatOutput(content) {
+    // Split into lines and clean
+    const lines = content
+      .split('\n')
+      .map(line => line.trim())
+      .filter(Boolean);
+    
+    // Process each line to ensure proper bullet formatting
+    const formatted = lines.map(line => {
+      // Remove markdown formatting
+      line = line.replace(/[*_#`]/g, '');
+      
+      // Convert various bullet styles to •
+      line = line.replace(/^[-•*]\s*/, '');
+      line = line.replace(/^\d+\.\s*/, '');
+      
+      // Ensure it starts with bullet
+      if (!line.startsWith('•')) {
+        line = `• ${line}`;
+      } else {
+        line = `• ${line.replace(/^•\s*/, '')}`;
+      }
+      
+      return line;
+    });
+    
+    // Remove duplicates and return
+    const unique = Array.from(new Set(formatted));
+    return unique.join('\n');
   }
 
   // Generate overview using researcher agent
   async generateOverview(relevantChunks, companyName, apiKey) {
-    const prompt = `As a Financial Researcher, provide a comprehensive company overview for ${companyName}:
+    const prompt = `Analyze the following information about ${companyName} and provide a comprehensive company overview.
 
 Relevant Information:
 ${relevantChunks.join('\n\n')}
 
-Include:
-• Business model and core operations
-• Market position and competitive landscape
-• Strategic initiatives and recent developments
-• Geographic presence and key markets
-• Organizational structure and key leadership`;
+Create 5-7 bullet points covering:
+- Business model and core operations
+- Market position and competitive landscape
+- Strategic initiatives and recent developments
+- Geographic presence and key markets
+- Organizational structure and key leadership
+
+Each bullet point must be a complete, informative sentence with specific details from the document.`;
 
     return await this.generateWithAgent('researcher', prompt, apiKey);
   }
 
   // Generate financial highlights using analyst agent
   async generateFinancialHighlights(relevantChunks, companyName, apiKey) {
-    const prompt = `As a Financial Analyst, analyze the financial performance of ${companyName}:
+    const prompt = `Analyze the financial performance of ${companyName} based on the following information.
 
 Relevant Information:
 ${relevantChunks.join('\n\n')}
 
-Provide detailed analysis of:
-• Revenue trends and growth rates
-• Profitability metrics (margins, EBITDA, net income)
-• Key financial ratios and their implications
-• Cash flow analysis and liquidity position
-• Year-over-year and quarter-over-quarter comparisons
-• Balance sheet strength`;
+Create 6-8 bullet points covering:
+- Revenue trends and growth rates with specific numbers
+- Profitability metrics (margins, EBITDA, net income) with percentages
+- Key financial ratios and their implications
+- Cash flow analysis and liquidity position
+- Year-over-year and quarter-over-quarter comparisons
+- Balance sheet strength indicators
+
+Each bullet must include specific numbers, percentages, or metrics from the document.`;
 
     return await this.generateWithAgent('analyst', prompt, apiKey);
   }
 
   // Generate risk assessment using risk assessor agent
   async generateRiskAssessment(relevantChunks, companyName, apiKey) {
-    const prompt = `As a Risk Assessment Specialist, identify and evaluate risks for ${companyName}:
+    const prompt = `Identify and evaluate key risks for ${companyName} based on the following information.
 
 Relevant Information:
 ${relevantChunks.join('\n\n')}
 
-Analyze:
-• Business and operational risks
-• Financial risks (debt, liquidity, currency)
-• Market and competitive risks
-• Regulatory and compliance risks
-• Strategic and execution risks
-• External factors (economic, geopolitical)`;
+Create 5-7 bullet points covering:
+- Business and operational risks
+- Financial risks (debt, liquidity, currency exposure)
+- Market and competitive risks
+- Regulatory and compliance risks
+- Strategic and execution risks
+- External factors (economic, geopolitical)
+
+Each bullet must describe a specific risk and its potential impact on the company.`;
 
     return await this.generateWithAgent('riskAssessor', prompt, apiKey);
   }
 
   // Generate management commentary using strategist agent
   async generateManagementCommentary(relevantChunks, companyName, apiKey) {
-    const prompt = `As a Strategic Advisor, interpret management's perspective for ${companyName}:
+    const prompt = `Interpret management's perspective and forward-looking statements for ${companyName} based on the following information.
 
 Relevant Information:
 ${relevantChunks.join('\n\n')}
 
-Summarize:
-• Executive commentary on performance
-• Strategic priorities and initiatives
-• Forward-looking statements and guidance
-• Management's view on challenges and opportunities
-• Capital allocation strategy
-• Long-term vision and goals`;
+Create 5-7 bullet points covering:
+- Executive commentary on performance and outlook
+- Strategic priorities and key initiatives
+- Forward-looking statements and guidance
+- Management's view on challenges and opportunities
+- Capital allocation strategy and investment plans
+- Long-term vision and growth goals
+
+Each bullet must capture specific management statements or strategic directions from the document.`;
 
     return await this.generateWithAgent('strategist', prompt, apiKey);
   }
@@ -236,18 +285,19 @@ Summarize:
   async answerQuestion({ vectorStore, question, companyName, apiKey }) {
     const relevantChunks = await this.queryRelevantChunks(vectorStore, question, 4);
     
-    const prompt = `As a Financial Analysis Coordinator, answer this question about ${companyName}:
+    const prompt = `Answer this question about ${companyName} based on the following information.
 
 Question: ${question}
 
 Relevant Information:
 ${relevantChunks.join('\n\n')}
 
-Provide a comprehensive, well-reasoned answer that:
-• Directly addresses the question
-• Cites specific information from the document
-• Provides context and implications
-• Acknowledges any limitations in the available data`;
+Provide a concise answer (2-3 sentences) that:
+- Directly addresses the question with specific information
+- Cites relevant data or facts from the document
+- Acknowledges if information is limited or unavailable
+
+Use plain text only, no formatting.`;
 
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
@@ -262,12 +312,12 @@ Provide a comprehensive, well-reasoned answer that:
         messages: [
           {
             role: 'system',
-            content: 'You are a Financial Analysis Coordinator who synthesizes insights from multiple specialized agents.'
+            content: 'You are a Financial Analysis Coordinator. Provide concise, evidence-based answers using plain text only. No markdown formatting.'
           },
           { role: 'user', content: prompt }
         ],
-        max_tokens: 400,
-        temperature: 0.25,
+        max_tokens: 300,
+        temperature: 0.2,
       }),
     });
 
@@ -276,7 +326,12 @@ Provide a comprehensive, well-reasoned answer that:
     }
 
     const data = await response.json();
-    return data.choices[0]?.message?.content || 'Unable to answer the question.';
+    let answer = data.choices[0]?.message?.content || 'Unable to answer the question.';
+    
+    // Clean up any markdown formatting
+    answer = answer.replace(/[*_#`]/g, '').replace(/\s+/g, ' ').trim();
+    
+    return answer;
   }
 }
 
